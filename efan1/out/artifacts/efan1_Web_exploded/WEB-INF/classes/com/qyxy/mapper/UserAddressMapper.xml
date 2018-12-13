@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.qyxy.mapper.UserAddressMapper" >
+    <select id="select" resultType="UserAddress">
+      select * from UserAddress where userid=#{username} and defstatus>0
+    </select>
+
+    <select id="selectAll" resultType="UserAddress">
+        select * from UserAddress where defstatus=2 and userid=#{userid}
+    </select>
+
+    <!--新增地址，设置一个addaddress的自增序列-->
+    <insert id="add">
+        <selectKey keyProperty="addressid" order="BEFORE" resultType="Integer">
+            select add_address.nextval from dual
+        </selectKey>
+        insert into UserAddress(addressid,userid,username,userphone,address,defstatus) values (#{addressid},#{userid},#{username},#{userphone},#{address},2)
+    </insert>
+
+    <delete id="delete1">
+        delete UserAddress where addressid=#{addressid}
+    </delete>
+
+    <update id="update1">
+         update UserAddress set username=#{username},userphone=#{userphone},address=#{address}  where addressid=#{addressid}
+    </update>
+
+    <update id="set">
+        update UserAddress set defstatus=2 where addressid=#{addressid}
+    </update>
+
+    <update id="set1">
+        update UserAddress set defstatus=1 where userid=#{userid}
+    </update>
+
+</mapper>

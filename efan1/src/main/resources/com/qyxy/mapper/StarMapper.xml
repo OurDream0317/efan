@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qyxy.mapper.StarMapper">
+<insert id="addStarDemo">
+    <selectKey keyProperty="STARID" order="BEFORE" resultType="Integer">
+        select STARID.nextval from dual
+    </selectKey>
+    INSERT INTO STAR(STARID，STARNAME，STARTIME，STARINTRODUCE，STARICOM，STARIMG) VALUES(#{STARID},#{starname},#{addTime},#{starintroduce},#{MyFile},#{MyFile1})
+</insert>
+    <select id="selectAll" resultType="Star">
+        SELECT * from star WHERE STARSHELF=1
+            </select>
+    <select id="viewStar" resultType="Star">
+        select * from (SELECT s1.* ,rownum rn from (SELECT * from STAR where STARSTATUS=0 ORDER by starid desc)s1) s2  WHERE s2.rn BETWEEN #{currentPage} AND  #{count}
+
+    </select>
+    <select id="selectStar" resultType="Star">
+        /*select * from (select e1.*,rownum rn from ( select * from show  ORDER by showid ASC)e1*/
+        select * from (SELECT s1.* ,rownum rn from (SELECT * from STAR where STARSTATUS=0 ORDER by starid desc)s1
+        <where>
+              <if test="starname!=null and starname!=''">
+                 AND STARNAME  LIKE #{content}
+              </if>
+                  <if test="upStatus!=null and upStatus!=-1">
+                   AND    STARSHELF=#{upStatus}
+                  </if>
+
+        <if test="sort!=null and sort!=-1">
+            <if test="sort==0">
+                order by rank asc
+            </if>
+
+            <if test="sort==1">
+                order by rank desc
+            </if>
+        </if>
+       <if test="sort==-1">
+
+       </if>
+        </where>
+        ) s2  WHERE  s2.rn BETWEEN #{currentPage} AND  #{count}
+    </select>
+    <select id="viewStarDemo" resultType="Star">
+        SELECT * from STAR where starid=#{id}
+    </select>
+    <update id="NoupdateUpStatus" >
+        UPDATE star SET STARSHELF=0 WHERE starid=#{id}
+       </update>
+    <update id="updateUpStatus" >
+        UPDATE star SET STARSHELF=1 WHERE starid=#{id}
+    </update>
+    <update id="updateDelStatus" >
+        UPDATE star SET STARSTATUS=1 WHERE starid=#{id}
+    </update>
+
+    <update id="editStarDemo">
+        UPDATE star
+        <set>
+        <if test="star.starname!=null">
+            STARNAME=#{star.starname},
+        </if>
+        <if test="star.starintroduce!=null">
+            STARINTRODUCE=#{star.starintroduce},
+        </if>
+        <if test="star.staricom!=null">
+            STARICOM=#{star.staricom},
+        </if>
+        <if test="star.starimg!=null">
+            STARIMG=#{star.starimg}
+        </if>
+        WHERE STARID=#{star.starid}
+        </set>
+    </update>
+
+    <select id="fontselecthot" resultType="Star">
+       select * from (
+         select b.*,rownum rn from(select * from star where starstatus=0 and starshelf=1 order by starfans desc) b
+        )c where c.rn between 1 and 4
+    </select>
+<update id="deleteAll">
+    UPDATE star set STARSTATUS=1,STARSHELF=0 where STARID=#{ids}
+</update>
+
+</mapper>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.qyxy.mapper.FeedbackMapper" >
+    <select id="findAll" resultType="Feedback">
+        select * from(
+        select feedback.*,rownum rn from feedback
+        <where>
+            <if test="feedbackstatus !=2 ">
+                and feedbackstatus = #{feedbackstatus}
+            </if>
+        </where>
+          order by feedbacktime desc
+        )e where  e.rn between #{startRow}   and #{endRow}
+    </select>
+
+    <update id="update">
+        update feedback set feedbackstatus=0 where feedbackid=#{feedbackid}
+    </update>
+
+</mapper>

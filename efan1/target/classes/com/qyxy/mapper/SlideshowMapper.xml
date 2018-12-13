@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qyxy.mapper.SlideshowMapper">
+<insert id="addimg">
+       <selectKey resultType="int" order="BEFORE" keyProperty="slideid">
+           select addimg.nextval from dual
+       </selectKey>
+           insert into slideshow(slideid,slidelocation,solideaddtime,slideimg,slideshelf,slidestatus,identifier) values (#{slideid},#{slidelocation},#{date},#{file},0,1,#{identifier})
+</insert>
+
+    <select id="selectAll" resultType="Slideshow">
+         select * from slideshow where slidestatus=1
+
+    </select>
+
+    <update id="update" >
+    update slideshow set slideshelf=#{slideshelf} where slideid=#{slideid}
+    </update>
+
+
+
+    <update id="delete">
+       update slideshow set slidestatus=0 where slideid=#{slideid}
+    </update>
+
+    <select id="shelfnumber" resultType="slideshow">
+        select * from slideshow where slidelocation=#{slidelocation} and slidestatus=1 and slideshelf=1
+    </select>
+
+
+    <!--前台首页查询轮播图，返回五张上架的轮播图,根据轮播图的位置查询-->
+    <select id="fontselectslideshow" resultType="Slideshow">
+        select * from (
+        select slideshow.*,rownum rn from slideshow
+       where slidestatus=1 and slideshelf=1 and slidelocation=#{slidelocation} order by solideaddtime desc
+        )c where c.rn between 1 and 5
+    </select>
+
+</mapper>

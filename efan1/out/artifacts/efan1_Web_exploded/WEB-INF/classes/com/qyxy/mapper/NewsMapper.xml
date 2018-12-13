@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.qyxy.mapper.NewsMapper" >
+<insert id="addNews">
+    <selectKey keyProperty="NEWSID" order="BEFORE" resultType="Integer">
+        select NEWSID.nextval from dual
+    </selectKey>
+    INSERT INTO news( NEWSID,NEWSTITLE,NEWSTAR,NEWSTIME,NEWSCONTENT,NEWSIMG,NEWSICON) VALUES (#{NEWSID},#{news.newstitle},#{news.newstar},#{news.newstime},#{news.newscontent},#{news.newsimg},#{string})
+        </insert>
+    <insert id="addNewsdemo">
+        <selectKey keyProperty="NEWSID" order="BEFORE" resultType="Integer">
+            select NEWSID.nextval from dual
+        </selectKey>
+        INSERT INTO news( NEWSID,NEWSTITLE,NEWSTAR,NEWSTIME,NEWSCONTENT,NEWSIMG) VALUES (#{NEWSID},#{news.newstitle},#{news.newstar},#{news.newstime},#{news.newscontent},#{news.newsimg})
+    </insert>
+    <select id="findNewsAllDemo" resultType="News">
+        SELECT news.*,rownum  from news WHERE NEWSSTATUS=1 and rownum BETWEEN #{starRow} AND #{endRow}  ORDER by newsid asc
+            </select>
+    <select id="findNewsAll" resultType="News">
+        SELECT * from(select n.*,rownum rn from (select * from news where news.NEWSSTATUS=1  ORDER by newsid asc)n
+        <where>
+            <if test="newsid!=null and newsid!=''">
+                AND newsid  LIKE #{content}
+            </if>
+            <if test="newstitle!=null and newstitle!=''">
+                AND    newstitle LIKE #{content}
+            </if>    <if test="tStatus!=null and tStatus!=-1">
+            AND NEWSRECOMMENT = #{tStatus}
+        </if>
+            <if test="upStatus!=null and upStatus!=-1">
+                AND  NEWSSHELF = #{upStatus}
+            </if>
+        </where>
+    )n1  where n1.rn BETWEEN #{starRow} AND #{endRow}
+    </select>
+    <select id="findNews" resultType="News">
+        SELECT * from news WHERE newsid=#{newsid}
+    </select>
+    <update id="updateUpStatus">
+        UPDATE news
+        <set>
+            <if test="newsshelf==0">
+                newsshelf=1 ,
+            </if>
+            <if test="newsshelf==1">
+                newsshelf=0
+            </if>
+        </set>
+        where newsid=#{newsid}
+            </update>
+    <update id="updateDelStatus">
+    UPDATE news SET NEWSSTATUS=0 WHERE newsid=#{newsid}
+</update>
+    <update id="updateTStatus">
+        UPDATE news
+        <set>
+            <if test="newsrecomment==0">
+                newsrecomment=1 ,
+            </if>
+            <if test="newsrecomment==1">
+                newsrecomment=0
+            </if>
+        </set>
+        where newsid=#{newsid}
+    </update>
+
+
+    <!--前端界面请求查询最新的4条新闻-->
+    <select id="fontSelectNews" resultType="News">
+       select * from (
+         select n.*,rownum rn from(select * from news where newsstatus=1 and newsshelf=1 and newsrecomment=1 order by newsid desc) n
+        )c where c.rn between 1 and 4
+    </select>
+    <!--前端界面请求查询最新的4条新闻-->
+    <select id="fontSelectNews1" resultType="News">
+       select n.*,rownum rn from(select * from news where newsstatus=1 and newsshelf=1 order by newsrecomment desc, newsid desc)n
+    </select>
+
+    <!--判断页面传过来的是加1还是减1-->
+    <update id="fontaddclicknumber">
+        update news
+         <set>
+             <if test="clicknumber!=0">
+                clicknumber=#{clicknumber}
+             </if>
+             <if test="readnumber!=0">
+                 readnumber=#{readnumber}
+             </if>
+             <if test="commentnumber!=0">
+                 commentnumber=#{commentnumber}
+             </if>
+
+         </set> where newsid=#{newsid}
+    </update>
+
+
+</mapper>

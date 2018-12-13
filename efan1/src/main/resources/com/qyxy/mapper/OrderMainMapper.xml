@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.qyxy.mapper.OrderMainMapper" >
+    <update id="updateStatus">
+        UPDATE ORDER_MAIN SET  ORDERSTATUS=4 WHERE ORDERNUMBER=#{ordernumber}
+    </update>
+
+   <select id="selectDemo" resultMap="orderMainDemo">
+          select * from (
+        select m.ordernumber,m.username,u.userphone,s.showtitle,d.price,d.orderprice,d.buynumber,s.showperson,s.showicon,s.showaddress,s.showtime,m.orderstatus,d.committime,d.ordertype,rownum rn
+        from user1 u,order_main m,order_datail d,show s
+        where
+            u.userid=m.userid and m.ordernumber=d.ordernumber and d.productid=s.showid
+            and d.ordertype=1 and  m.orderstatus=#{status}  order by d.committime desc
+        )
+            </select>
+    <resultMap id="orderMainDemo" type="OrderMain">
+        <id column="ordernumber" property="ordernumber"></id>
+        <result column="username" property="username"></result>
+        <result column="orderstatus" property="orderstatus"></result>
+        <association property="user1" column="userid" javaType="User1">
+            <id column="userid" property="userid"></id>
+        </association>
+        <collection property="orderDatailList" ofType="OrderDatail" >
+
+            <result column="buynumber" property="buynumber"></result>
+            <result column="committime" property="committime"></result>
+            <result column="ordertype" property="ordertype"></result>
+            <result column="price" property="price"></result>
+            <result column="orderprice" property="orderprice"></result>
+            <collection property="showList" ofType="Show">
+                <result column="showtitle" property="showtitle"></result>
+                <result column="showperson" property="showperson"></result>
+                <result column="showadress" property="showadress"></result>
+                <result column="showtime" property="showtime"></result>
+                <result column="showicon" property="showicon"></result>
+                <result column="showaddress" property="showaddress"></result>
+            </collection>
+
+        </collection>
+
+    </resultMap>
+
+    <select id="selectAll" resultMap="ordermain4">
+        select * from (
+        select m.ordernumber,m.username,u.userphone,s.showtitle,d.price,d.orderprice,d.buynumber,s.showperson,s.showicon,s.showaddress,s.showtime,m.orderstatus,d.committime,d.ordertype,rownum rn
+        from user1 u,order_main m,order_datail d,show s
+        where
+            u.userid=m.userid and m.ordernumber=d.ordernumber and d.productid=s.showid
+            and d.ordertype=1 order by d.committime desc
+        )
+    </select>
+    <resultMap id="ordermain4" type="OrderMain">
+        <id column="ordernumber" property="ordernumber"></id>
+        <result column="username" property="username"></result>
+        <result column="orderstatus" property="orderstatus"></result>
+        <association property="user1" column="userid" javaType="User1">
+            <id column="userid" property="userid"></id>
+        </association>
+        <collection property="orderDatailList" ofType="OrderDatail" >
+
+            <result column="buynumber" property="buynumber"></result>
+            <result column="committime" property="committime"></result>
+            <result column="ordertype" property="ordertype"></result>
+            <result column="price" property="price"></result>
+            <result column="orderprice" property="orderprice"></result>
+            <collection property="showList" ofType="Show">
+                <result column="showtitle" property="showtitle"></result>
+                <result column="showperson" property="showperson"></result>
+                <result column="showadress" property="showadress"></result>
+                <result column="showtime" property="showtime"></result>
+                <result column="showicon" property="showicon"></result>
+                <result column="showaddress" property="showaddress"></result>
+            </collection>
+
+        </collection>
+
+    </resultMap>
+
+    <!--查询票务订单-->
+    <select id="selectOrdernoteAll" resultMap="ordermain">
+        select * from (
+        select m.ordernumber,m.username,u.userphone,s.showtitle,d.price,d.buynumber,s.showperson,m.orderstatus,d.committime,d.ordertype,rownum rn
+        from user1 u,order_main m,order_datail d,show s
+        <where>
+            u.userid=m.userid and m.ordernumber=d.ordernumber and d.productid=s.showid
+            <if test="ordernumber!=null and ordernumber!=''">
+                and m.ordernumber like '%${ordernumber}%'
+            </if>
+            <if test="username!=null and username!=''">
+                and m.username like '%${username}%'
+            </if>
+            <if test="usernumber!=null and usernumber!=''">
+                and u.usernumber like '%${usernumber}%'
+            </if>
+            <if test="showtitle!=null and showtitle!=''">
+                and s.showtitle  like '%${showtitle}%'
+            </if>
+            <if test="showperson!=null and showperson!=''">
+                and s.showperson like  '%${showperson}%'
+            </if>
+            <if test="orderstatus!=5">
+                and m.orderstatus=#{orderstatus}
+            </if>
+            and d.ordertype=1 order by d.committime desc
+        </where>
+
+        )c where c.rn between #{startRow} and #{endRow}
+    </select>
+    <resultMap id="ordermain" type="OrderMain">
+        <id column="ordernumber" property="ordernumber"></id>
+        <result column="username" property="username"></result>
+        <result column="orderstatus" property="orderstatus"></result>
+
+        <association property="user1" column="userid" javaType="User1">
+            <result column="userphone" property="userphone"></result>
+        </association>
+        <collection property="orderDatailList" ofType="OrderDatail">
+            <result column="price" property="price"></result>
+            <result column="buynumber" property="buynumber"></result>
+            <result column="committime" property="committime"></result>
+            <result column="ordertype" property="ordertype"></result>
+
+            <collection property="showList" ofType="Show">
+                <result column="showtitle" property="showtitle"></result>
+                <result column="showperson" property="showperson"></result>
+            </collection>
+
+        </collection>
+
+    </resultMap>
+
+    <!--查询黄牛端的票务订单-->
+    <select id="selectOrdernoteAll2" resultMap="ordermain2">
+        select * from (
+        select m.ordernumber,m.username,u.userphone,s.showtitle,d.price,d.buynumber,s.showperson,m.orderstatus,d.committime,d.ordertype,rownum rn
+        from user1 u,order_main m,order_datail d,show s
+        <where>
+            u.userid=m.userid and m.ordernumber=d.ordernumber and d.productid=s.showid
+            <if test="ordernumber!=null and ordernumber!=''">
+                and m.ordernumber like '%${ordernumber}%'
+            </if>
+            <if test="username!=null and username!=''">
+                and m.username like '%${username}%'
+            </if>
+            <if test="usernumber!=null and usernumber!=''">
+                and u.usernumber like '%${usernumber}%'
+            </if>
+            <if test="showtitle!=null and showtitle!=''">
+                and s.showtitle  like '%${showtitle}%'
+            </if>
+            <if test="orderstatus!=5">
+                and m.orderstatus=#{orderstatus}
+            </if>
+            and s.showperson=#{showperson} and d.ordertype=1 order by d.committime desc
+        </where>
+
+        )c where c.rn between #{startRow} and #{endRow}
+    </select>
+    <resultMap id="ordermain2" type="OrderMain">
+        <id column="ordernumber" property="ordernumber"></id>
+        <result column="username" property="username"></result>
+        <result column="orderstatus" property="orderstatus"></result>
+
+        <association property="user1" column="userid" javaType="User1">
+            <result column="userphone" property="userphone"></result>
+        </association>
+        <collection property="orderDatailList" ofType="OrderDatail">
+            <result column="price" property="price"></result>
+            <result column="buynumber" property="buynumber"></result>
+            <result column="committime" property="committime"></result>
+            <result column="ordertype" property="ordertype"></result>
+
+            <collection property="showList" ofType="Show">
+                <result column="showtitle" property="showtitle"></result>
+                <result column="showperson" property="showperson"></result>
+            </collection>
+
+        </collection>
+
+    </resultMap>
+
+    <!--通过订单编号查询票务订单详情 需要查询showid-->
+    <select id="selsectOrderByNumber" resultMap="orderdetail">
+            select m.*,d.*,s.showtitle,s.showperson,u.userphone
+        from user1 u,order_main m,order_datail d,show s
+        where u.userid=m.userid and m.ordernumber=d.ordernumber and d.productid=s.showid and m.ordernumber=#{ordernumber}
+
+    </select>
+    <resultMap id="orderdetail" type="OrderMain" autoMapping="true">
+
+        <association property="user1" column="userid" javaType="User1">
+            <result column="userphone" property="userphone"></result>
+        </association>
+        <collection property="orderDatailList" ofType="OrderDatail" autoMapping="true">
+
+
+            <collection property="showList" ofType="Show">
+                <result column="showtitle" property="showtitle"></result>
+                <result column="showperson" property="showperson"></result>
+            </collection>
+
+        </collection>
+    </resultMap>
+
+
+    <!--查询商品订单-->
+
+    <select id="selectOrderProductroAll" resultMap="ordermain1">
+        select * from (
+        select m.ordernumber,m.username,u.userphone,p.proname,d.price,d.buynumber,p.properson,m.orderstatus,d.committime,d.ordertype,rownum rn
+        from user1 u,order_main m,order_datail d,product p
+        <where>
+            u.userid=m.userid and m.ordernumber=d.ordernumber and d.productid=p.proid
+            <if test="ordernumber!=null and ordernumber!=''">
+                and m.ordernumber like '%${ordernumber}%'
+            </if>
+            <if test="username!=null and username!=''">
+                and m.username like '%${username}%'
+            </if>
+            <if test="usernumber!=null and usernumber!=''">
+                and u.usernumber like '%${usernumber}%'
+            </if>
+            <if test="showtitle!=null and showtitle!=''">
+                and s.showtitle  like '%${showtitle}%'
+            </if>
+            <if test="showperson!=null and showperson!=''">
+                and s.showperson like  '%${showperson}%'
+            </if>
+            <if test="orderstatus!=5">
+                and m.orderstatus=#{orderstatus}
+            </if>
+        </where>
+        and d.ordertype=0 order by d.committime desc
+        )c where c.rn between #{startRow} and #{endRow}
+    </select>
+    <resultMap id="ordermain1" type="OrderMain">
+        <id column="ordernumber" property="ordernumber"></id>
+        <result column="username" property="username"></result>
+        <result column="orderstatus" property="orderstatus"></result>
+
+        <association property="user1" column="userid" javaType="User1">
+            <result column="userphone" property="userphone"></result>
+        </association>
+        <collection property="orderDatailList" ofType="OrderDatail">
+            <result column="price" property="price"></result>
+            <result column="buynumber" property="buynumber"></result>
+            <result column="committime" property="committime"></result>
+            <result column="ordertype" property="ordertype"></result>
+
+            <collection property="productList" ofType="Product">
+                <result column="proname" property="proname"></result>
+                <result column="properson" property="properson"></result>
+            </collection>
+        </collection>
+
+    </resultMap>
+
+    <!--通过订单编号查询商品 订单详情 需要查询proid-->
+    <select id="selsectProductByOrdernumber" resultMap="orderdetail2">
+        select m.*,d.*,p.proname,p.properson,u.userphone
+        from user1 u,order_main m,order_datail d,product p
+        where u.userid=m.userid and m.ordernumber=d.ordernumber and d.productid=p.proid and m.ordernumber=#{ordernumber}
+
+    </select>
+    <resultMap id="orderdetail2" type="OrderMain" autoMapping="true">
+
+        <association property="user1" column="userid" javaType="User1">
+            <result column="userphone" property="userphone"></result>
+        </association>
+        <collection property="orderDatailList" ofType="OrderDatail" autoMapping="true">
+
+
+            <collection property="productList" ofType="Product">
+                <result column="proname" property="proname"></result>
+                <result column="properson" property="properson"></result>
+            </collection>
+
+        </collection>
+    </resultMap>
+
+    <!--修改订单状态，将物流信息添加进数据库 将代发货，改为待收货-->
+
+    <update id="updateOrderStatus">
+        update order_main set express=#{express},expressnumber=#{expressnumber},orderstatus=#{orderstatus} where ordernumber=#{ordernumber}
+    </update>
+
+
+
+    <!--中强大神操作，改动时请联系电弧110120119，乱改干嫩娘-->
+    <insert id="insertOrder">
+           <!--<selectKey  keyProperty="ordernumber" order="BEFORE" resultType="Integer">
+               select addorder.nextval from dual
+           </selectKey>-->
+      insert into Order_Main(ordernumber,username,userid,remarks,orderstatus,userphone,useraddress) VALUES
+        (#{ordernumber},#{username},#{userid},#{text},1,#{userphone},#{address})
+    </insert>
+
+    <select id="findmaxid" resultType="Integer">
+         select addorder.nextval from dual
+    </select>
+
+
+</mapper>

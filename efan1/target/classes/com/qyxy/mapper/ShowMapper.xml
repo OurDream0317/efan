@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qyxy.mapper.ShowMapper">
+  <select id="viewShow" resultType="Show">
+    SELECT  * from show where showid=#{id}
+  </select>
+
+  <select id="findShowAll" resultType="Show">
+    /*select e.*,rownum rn from( select * from show  ORDER by showid ASC) e;*/
+    select * from (select e1.*,rownum rn from ( select * from show where show.SHOWSTATUS=0 ORDER by showid ASC)e1
+    <where>
+      <if test="SHOWID!=null">
+        and SHOWID=#{content}
+      </if>
+      <if test="SHOWTITLE!=null">
+        and SHOWTITLE=#{content}
+      </if>
+
+      <if test="SHOWPERSON!=null">
+        and SHOWPERSON=#{content}
+      </if>
+      <if test="pStatus!=null and pStatus!=-1">
+        and auditstatus=#{pStatus}
+      </if>
+      <if test="upStatus!=null and upStatus!=-1">
+        and SHOWSHELF=#{upStatus}
+      </if>
+
+      <if test="tStatus!=null and tStatus!=-1">
+        and SHOWRECOMMEND=#{tStatus}
+      </if>
+      <if test="status==1">
+
+      </if>
+      <if test="status==2">
+        and SHOWPERSON=#{fbr} and status=#{status}
+      </if>
+    </where>
+    )e where e.rn BETWEEN #{startRow} and #{endRow}
+  </select>
+
+  <select id="findAll" resultType="Show">
+  select * from (select e1.*,rownum rn from ( select * from show WHERE showstatus=0  ORDER by showid ASC)e1
+  <where>
+    <if test="status==1">
+      and status=#{status}
+    </if>
+    <if test="status==2">
+      and SHOWPERSON=#{fbr} and status=#{status}
+    </if>
+  </where>
+   )e  where e.rn BETWEEN #{startRow} and #{endRow}
+  </select>
+
+  <insert id="addshow" >
+    <selectKey keyProperty="SHOWID" order="BEFORE" resultType="Integer">
+      select SEQ_SHOW_SHOWNO.nextval from dual
+    </selectKey>
+      INSERT into show(SHOWID,SHOWTITLE,SHOWPERSON,SHOWADDTIME,SHOWADDRESS，SHOWTIME，SHOWPRICE1，SHOWNUMBER1，SHOWPRICE2,SHOWNUMBER2,SHOWICON,SHOWSTAR,SHOWDETAIL,STATUS) VALUES (#{SHOWID},#{show.showtitle},#{show.showperson},#{show.showaddtime},#{show.showaddress},#{show.showtime},
+      #{show.showprice1}, #{show.shownumber1}, #{show.showprice2}, #{show.shownumber2},#{show.showicon},#{show.showstar},#{show.showdetail},#{show.status})
+  </insert>
+
+  <update id="updateShow">
+    update show
+    <set>
+      <if test="show.showtitle!=null">
+        SHOWTITLE=#{show.showtitle},
+      </if>
+      <if test="show.showstar!=null">
+        SHOWSTAR=#{show.showstar},
+      </if>
+      <if test="show.showaddress!=null">
+        SHOWADDRESS=#{show.showaddress},
+      </if>
+      <if test="show.showprice1!=null">
+        showprice1=#{show.showprice1},
+      </if>
+      <if test="show.shownumber1!=null">
+        shownumber1=#{show.shownumber1},
+      </if>
+      <if test="show.showprice2!=null">
+        showprice2=#{show.showprice2},
+      </if>
+      <if test="show.shownumber2!=null">
+        shownumber2=#{show.shownumber2},
+      </if>
+      <if test="show.showdetail!=null">
+        showdetail=#{show.showdetail},
+      </if>
+      <if test="show.showicon!=null">
+        showicon=#{show.showicon}
+      </if>
+    </set>
+    where showid=#{show.showid}
+  </update>
+
+  <update id="updateShowUpStatus">
+    UPDATE show
+    <set>
+      <if test="shelf!=null">
+        showshelf=#{shelf},
+      </if>
+      <if test="recommend==0">
+       SHOWRECOMMEND=#{recommend}
+      </if>
+    </set>
+      where showid=#{id}
+  </update>
+
+  <update id="updateShowTStatus">
+    UPDATE show SET showrecommend=#{recommend} where showid=#{id}
+  </update>
+
+  <update id="updateShowDelStatus">
+    UPDATE show SET showstatus=#{status} where showid=#{id}
+  </update>
+
+  <update id="updateShowAuditstatus">
+  UPDATE show SET AUDITSTATUS=1,showshelf=1 where showid=#{id}
+</update>
+
+  <update id="NoupdateShowAuditstatus">
+    UPDATE show SET AUDITSTATUS=2 where showid=#{id}
+  </update>
+
+  <!--前台首页查询一个最新的演出-->
+  <select id="fontSelectShow" resultType="Show">
+     select * from (
+         select s.*,rownum rn from(select * from show where showstatus=0 and showshelf=1 and showrecommend=1 and auditstatus=1 order by showaddtime desc) s
+        )c where c.rn between 1 and 4
+  </select>
+
+
+
+
+</mapper>

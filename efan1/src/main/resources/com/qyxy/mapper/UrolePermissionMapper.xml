@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qyxy.mapper.UrolePermissionMapper">
+    <insert id="insertUp">
+        <selectKey resultType="int" order="BEFORE" keyProperty="urolepermissionid">
+            select insertup.nextval  from dual
+        </selectKey>
+       insert into  Urole_Permission(urolepermissionid,uroleid,upermissionid,status) values (#{urolepermissionid},#{uroleid},#{upermissionid},1)
+    </insert>
+
+    <delete id="deleteAP">
+        delete Urole_Permission  where uroleid=#{uroleid}
+    </delete>
+
+</mapper>

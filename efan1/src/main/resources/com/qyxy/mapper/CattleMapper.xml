@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.qyxy.mapper.CattleMapper" >
+
+    <select id="SelectCattleAll" resultType="Cattle">
+        select * from (
+        select cattle.*,rownum rn from cattle
+        <where>
+            <if test="cattlename!=null and cattlename!=''">
+                and cattlename=#{cattlename}
+            </if>
+            <if test="cattlephone!=null and cattlephone!=''">
+                and cattlephone=#{cattlephone}
+            </if>
+            <if test="cattlestatus!=2">
+                and cattlestatus=#{cattlestatus}
+            </if>
+
+
+        </where>
+        ORDER BY cattleid desc
+        )c where c.rn between #{startRow} and #{endRow}
+    </select>
+    <!--通过账号查询 返回一个cattle对象-->
+    <select id="selectByPhone" resultType="Cattle">
+        select * from cattle where cattlephone=#{cattlephone}
+    </select>
+    <!-- 新增一个cattle数据-->
+    <insert id="insertCattle">
+        <selectKey keyProperty="cattleid" order="BEFORE" resultType="Integer">
+            select add_cattle.nextval from dual
+        </selectKey>
+        insert into cattle(cattleid,cattlename,cattlephone,cattlepassword,cattlenumber,cattlesalt,cattlestatus)
+        values (#{cattleid},#{cattle.cattlename},#{cattle.cattlephone},#{cattle.cattlepassword},0,#{cattle.cattlesalt},1)
+    </insert>
+
+    <!--更改黄牛的禁用状态-->
+    <update id="updateStatus">
+        update cattle set cattlestatus=#{cattlestatus} where cattleid=#{cattleid}
+    </update>
+
+
+
+</mapper>

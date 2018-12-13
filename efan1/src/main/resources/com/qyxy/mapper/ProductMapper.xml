@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.qyxy.mapper.ProductMapper" >
+    <!--多条件分页查询商品列表-->
+    <select id="selectProductAll" resultType="Product">
+        select * from (
+        select product.*,rownum rn from product
+        <where>
+            <if test="proname!=null and proname!=''">
+                and proname=#{proname}
+            </if>
+            <if test="proid!=0">
+                and proid=#{proid}
+            </if>
+            <if test="properson!=null and properson!=''">
+                and properson=#{properson}
+            </if>
+            <if test="proshelf!=2">
+                and proshelf=#{proshelf}
+            </if>
+            <if test="true">
+                and prostatus=1
+            </if>
+
+        </where>
+        ORDER BY proid desc
+        )c where c.rn between #{startRow} and #{endRow}
+    </select>
+
+    <!--新增商品-->
+    <insert id="insertProduct">
+        <selectKey keyProperty="proid" order="BEFORE" resultType="Integer">
+            select add_product.nextval from dual
+        </selectKey>
+        insert into product(proid,proname,proprice,protime,proshelf,prostatus,proicon,prodetail,prosale,prostock,properson,prostar)
+        values (#{proid},#{proname},#{proprice},#{protime},#{proshelf},#{prostatus},#{proicon},#{prodetail},#{prosale},#{prostock},#{properson},#{prostar})
+    </insert>
+    <!--修改商品的上下架状态-->
+    <update id="updateProshelf">
+        update product set proshelf=#{proshelf} where proid=#{proid}
+    </update>
+    <!--修改商品的删除属性为0-->
+    <update id="deleteProduct">
+        update product set prostatus=0 where proid=#{proid}
+    </update>
+
+
+    <!--通过id查询商品-->
+    <select id="selectProductByid" resultType="Product">
+        select * from product where proid=#{proid}
+    </select>
+
+    <update id="editproduct1">
+        update product
+        <set>
+            <if test="proname!=null and proname!=''">
+                proname=#{proname},
+            </if>
+            <if test="proprice!=null">
+                proprice=#{proprice},
+            </if>
+            <if test="prostock!=null">
+                prostock=#{prostock},
+            </if>
+            <if test="prostar!=null and prostar!=''">
+                prostar=#{prostar},
+            </if>
+            <if test="prodetail!=null and prodetail!=''">
+                prodetail=#{prodetail},
+            </if>
+            <if test="proicon!=null and proicon!=''">
+                proicon=#{proicon}
+            </if>
+
+        </set>
+        where proid=#{proid}
+    </update>
+
+    <!--前台站长页面，通过发布账户查询商品-->
+    <select id="selectMasterByphone" resultType="Product">
+        select product.* from product where prostatus=1 and properson=#{userphone}  ORDER BY proid desc
+    </select>
+
+    <!--通过商品名模糊查询-->
+    <select id="nameselect" resultType="Product">
+        select * from Product where proname like '%${productname}%'
+
+    </select>
+
+    <!--通过商品名精确查询-->
+    <select id="nameselect1" resultType="Product">
+        select * from Product where proname =#{productname}
+
+    </select>
+
+    <!--查询商品-->
+    <select id="nameselect2" resultType="Product">
+        select * from Product where proshelf=1 and prostatus=1 order by protime desc
+    </select>
+
+</mapper>

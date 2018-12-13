@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.qyxy.mapper.CommentMapper" >
+    <select id="see" resultMap="See">
+        SELECT u.USERICON,u.USERPHONE,u.NICKNAME,c.COMMENTID,c.COMMENTCONTENT,c.REPLYS,c.COMMENTTIME
+        from USER1 u, COMMENT1 c,News n
+        WHERE c.COMMENTUSERID=u.USERID AND c.whereid=n.newsid and n.newsid=#{id}
+    </select>
+    <resultMap id="See" type="Comment" autoMapping="true">
+       <association property="user1" autoMapping="true" javaType="User1" >
+       </association>
+    </resultMap>
+
+    <!--新增评论-->
+    <insert id="addcomment">
+        <selectKey keyProperty="commentid" order="BEFORE" resultType="Integer">
+            select add_comment.nextval from dual
+        </selectKey>
+        insert into comment1(commentid,commentcontent,commenttime,commentuserid,whereid,commenttyle,commentstatus,replys)
+        values(#{commentid},#{comment.commentcontent},#{comment.commenttime},#{comment.commentuserid},#{comment.whereid},#{comment.commenttyle},#{comment.commentstatus},0)
+    </insert>
+
+</mapper>

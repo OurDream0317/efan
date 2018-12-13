@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.qyxy.mapper.ManageMapper" >
+
+    <!--通过账号返回对象-->
+    <select id="selectManageByAcc" resultType="Manage">
+        select * from manage where manageacc=#{manageacc}
+    </select>
+
+    <!--通过用户账号返回权限-->
+    <select id="selectPermissionList" resultType="Upermission">
+       select p.* from upermission p where p.upermissionid in (
+        select rp.upermissionid from urole_permission rp where rp.uroleid in (
+        select ur.uroleid from user_role ur where ur.useraccount in(
+        select m.manageacc from manage m where m.manageacc=#{manageacc}
+        )
+        )
+        )
+    </select>
+
+
+    <!--x新增人员-->
+    <insert id="addMange">
+        <selectKey resultType="int" order="BEFORE" keyProperty="manageid">
+            select efan_manage.nextval  from dual
+        </selectKey>
+        insert into manage (manageid,manageacc,managepassword,nickname,managesalt,managestatus,addtime,managename) values (#{manageid},#{manageacc},#{mh1},#{nickname},#{manageacc},1,#{date},#{managename})
+
+    </insert>
+
+    <!--修改密码-->
+    <update id="updatePassword">
+       update  manage set managepassword= #{password} where manageid=#{username}
+    </update>
+
+    <!--分页查询所有人员-->
+    <select id="findAll" resultType="Manage">
+     select * from(
+        select manage.*,rownum rn from manage
+        <where>
+            <if test="managename != null and managename !='' ">
+                and managename like '%${managename}%'
+            </if>
+            and managestatus=1
+        </where>
+
+        )e where e.rn between #{startRow} and #{endRow}
+    </select>
+
+     <!--删除人员-->
+    <update id="deleteManger">
+        update manage set managestatus =0 where manageacc=#{manageacc}
+    </update>
+
+    <!--修改编辑-->
+    <update id="updateManger">
+        update manage
+        <set>
+            <if test="username != null">
+                managename = #{username},
+            </if>
+            <if test="nickname != null">
+                nickname= #{nickname}
+            </if>
+        </set>
+        where manageacc=#{username1}
+    </update>
+
+   <!-- <update id="updateUrole">
+        update urole set uroleid=#{uroleid} where
+
+    </update>-->
+
+
+
+    <!--根据姓名查询-->
+    <select id="selectName" resultType="Manage">
+        select * from manage where username like #{username} and managestatus=1
+    </select>
+
+<!--多条件分页查询黄牛-->
+    <select id="SelectCattleAll" resultType="Manage">
+        select * from (
+        select manage.*,rownum rn from manage
+        <where>
+            <if test="nickname!=null and nickname!=''">
+                and nickname like '%'#{nickname}'%'
+            </if>
+            <if test="manageacc!=null and manageacc!=''">
+                and manageacc like '%'#{manageacc}'%'
+            </if>
+            <if test="disable!=2">
+                and disable=#{disable}
+            </if>
+            and managestatus=2
+        </where>
+        ORDER BY manageid desc
+        )c where c.rn between #{startRow} and #{endRow}
+    </select>
+    <!--通过账号查询 返回一个cattle对象-->
+    <select id="selectCattleByPhone" resultType="Manage">
+        select * from manage where manageacc=#{manageacc}
+    </select>
+    <!-- 新增一个cattle数据-->
+    <insert id="insertCattle">
+        <selectKey keyProperty="manageid" order="BEFORE" resultType="Integer">
+            select efan_manage.nextval from dual
+        </selectKey>
+        insert into manage(manageid,nickname,manageacc,managepassword,managesalt,addtime,shownumber,managestatus)
+        values (#{manageid},#{manage.nickname},#{manage.manageacc},#{manage.managepassword},#{manage.managesalt},#{manage.addtime},0,2)
+    </insert>
+
+    <!--更改黄牛的禁用状态-->
+    <update id="updateCattleStatus">
+        update manage set disable=#{disable} where manageid=#{manageid}
+    </update>
+
+
+</mapper>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.qyxy.mapper.OrderDatailMapper" >
+    <insert id="insertMain">
+        <selectKey keyProperty="orderid" order="BEFORE" resultType="Integer">
+            select addorderdetails.nextval from dual
+        </selectKey>
+        insert into order_datail(orderid,ordernumber,productid,committime,buynumber,ordertype,price,orderprice) VALUES (#{orderid},#{ordernumber},#{productid},#{currenttime},#{buynumber},0,#{price},#{orderprice})
+    </insert>
+
+</mapper>

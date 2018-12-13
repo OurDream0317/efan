@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qyxy.mapper.User1Mapper">
+    <update id="updataUser">
+        UPDATE USER1
+         <set>
+             <if test="user1.nickname!=null">
+                  nickname=#{user1.nickname},
+             </if>
+             <if test="user1.userphone!=null">
+                  userphone=#{user1.userphone},
+             </if>
+             <if test="user1.userbirthday!=null">
+                 userbirthday=#{user1.userbirthday},
+             </if>
+             <if test="user1.usersex!=null">
+                  usersex=#{user1.usersex},
+             </if>
+             <if test="user1.useraddress!=null">
+                 useraddress=#{user1.useraddress},
+             </if>
+             <if test="user1.userstar!=null">
+                 userstar=#{user1.userstar},
+             </if>
+             <if test="user1.usersingnature!=null">
+                 usersingnature=#{user1.usersingnature},
+             </if>
+             <if test="user1.constellation!=null">
+                 constellation=#{user1.constellation}
+             </if>
+         </set>
+        WHERE  user1.userphone='15239932660'
+    </update>
+    <select id="selectAllUser" resultType="User1">
+        select * from(
+        select user1.*,rownum rn from user1
+        <where>
+            <if test="user1.nickname!=null">
+                and nickname=#{user1.nickname}
+            </if>
+            <if test="user1.userphone!=null">
+                and userphone=#{user1.userphone}
+            </if>
+            <if test="user1.usersex!=null">
+                and usersex=#{user1.usersex}
+            </if>
+            <if test="user1.useraddress!=null">
+                and useraddress=#{user1.useraddress}
+            </if>
+           <if test="user1.userstatus!=4">
+               and userstatus=#{user1.userstatus} order by userid
+           </if>
+            <if test="user1.userstatus==4">
+                and userstatus IN (1,2,3) order by userid
+            </if>
+
+        </where>
+        )e where e.rn between #{startRow} and #{endRow}
+    </select>
+
+    <update id="updatedisable">
+        update user1 set userdisable=#{user1.userdisable} where userid=#{user1.userid}
+    </update>
+
+    <select id="selectUserById" resultType="User1">
+        select * from User1 where userid=#{userid}
+    </select>
+
+    <update id="updateUserStatus">
+        update user1 set userstatus=2 where userid=#{userid}
+    </update>
+
+
+
+    <!--后台用户页面实现批量禁用-->
+    <delete id="updateUserDisable" parameterType="List">
+        update user1 set userdisable=0 where userid in
+        <foreach collection="list" item="userid" open="(" close=")" separator=",">
+            #{userid}
+        </foreach>
+    </delete>
+    <!--新增用户-->
+    <insert id="saveUser">
+        <selectKey keyProperty="userid" order="BEFORE" resultType="Integer">
+            select adduser1.nextval from dual
+        </selectKey>
+        insert into user1(userid,userphone,userpassword,nickname,userstatus,userdisable) values (#{userid},#{phone},#{password},#{username},1,1)
+    </insert>
+
+    <!--查看用户是否存在-->
+    <select id="userList" resultType="user1">
+        select nickname from user1 where nickname=#{username}
+    </select>
+
+    <select id="userList1" resultType="user1">
+        select userphone from user1 where userphone=#{userphone}
+    </select>
+
+    <select id="findUserName" resultType="user1">
+        select userpassword from user1 where userphone=#{userphone}
+    </select>
+
+    <select id="findStatus" resultType="user1">
+        select userstatus from user1 where userphone=#{userphone}
+    </select>
+
+    <select id="findUserByName" resultType="user1">
+        select * from user1 where userphone=#{userphone}
+    </select>
+
+
+
+
+</mapper>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qyxy.mapper.UserRoleMapper">
+    <insert id="addUserRole" >
+        <selectKey resultType="int" order="BEFORE" keyProperty="userroleid">
+            select add_urol_role.nextval  from dual
+        </selectKey>
+        INSERT into User_Role(userroleid,useraccount,uroleid) VALUES (#{userroleid},#{useraccount},#{uroleid})
+
+    </insert>
+
+    <update id="updateUrole">
+        update User_Role set uroleid =#{uroleid} where useraccount=#{username1}
+    </update>
+
+
+
+</mapper>

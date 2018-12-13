@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+<!--
+    &lt;!&ndash;引入数据库properties配置文件&ndash;&gt;
+    <properties resource="db.properties"></properties>-->
+
+    <settings>
+        <!---解决命名方式不一致问题  将数据库表中_ 和驼峰式命名法保持一致 -->
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+        <!--配置sql日志文件输出-->
+        <setting name="logImpl" value="log4j2"></setting>
+        <!--设置懒加载特性-->
+        <setting name="lazyLoadingEnabled" value="true"></setting>
+        <!--将积极加载改为消极加载（按需加载）-->
+        <setting name="aggressiveLazyLoading" value="false"/>
+        <!--开启缓存功能 开发阶段使用false 不使用缓存 项目上线使用true-->
+        <setting name="cacheEnabled" value="true"/>
+    </settings>
+
+    <!--给类起别名-->
+    <typeAliases>
+        <!--给特定类起别名-->
+        <!--<typeAlias type="com.qyxy.domain.User" alias="User"></typeAlias>-->
+        <!--针对实体类所在的包，统一起别名,默认别名就是类名-->
+        <package name="com.qyxy.domain"></package>
+    </typeAliases>
+
+    <!--environments 配置使用的数据库环境，可以配置多个环境 default指定默认使用的环境-->
+   <!-- <environments default="development">
+
+        <environment id="development">
+            <transactionManager type="JDBC" />
+            <dataSource type="POOLED">
+                <property name="driver" value="${oracle.driver}" />
+                <property name="url" value="${oracle.url}" />
+                <property name="username" value="${oracle.username}" />
+                <property name="password" value="${oracle.password}" />
+            </dataSource>
+        </environment>
+
+
+        <environment id="test">
+            <transactionManager type="JDBC" />
+            <dataSource type="POOLED">
+                <property name="driver" value="${driver}" />
+                <property name="url" value="${url}" />
+                <property name="username" value="${username}" />
+                <property name="password" value="${password}" />
+            </dataSource>
+        </environment>
+
+
+
+    </environments>-->
+
+    <!--引入mybatis mapper映射文件-->
+    <mappers>
+        <!--引入配置文件-->
+        <mapper resource="com/qyxy/mapper/CattleMapper.xml" />
+        <mapper resource="com/qyxy/mapper/CommentMapper.xml" />
+        <mapper resource="com/qyxy/mapper/FeedbackMapper.xml" />
+        <mapper resource="com/qyxy/mapper/ManageMapper.xml" />
+        <mapper resource="com/qyxy/mapper/MasterMapper.xml" />
+        <mapper resource="com/qyxy/mapper/NewsMapper.xml" />
+        <mapper resource="com/qyxy/mapper/OrderDatailMapper.xml" />
+        <mapper resource="com/qyxy/mapper/OrderMainMapper.xml" />
+        <mapper resource="com/qyxy/mapper/ProductMapper.xml" />
+        <mapper resource="com/qyxy/mapper/ShowMapper.xml" />
+        <mapper resource="com/qyxy/mapper/SlideshowMapper.xml" />
+        <mapper resource="com/qyxy/mapper/StarMapper.xml" />
+        <mapper resource="com/qyxy/mapper/TopicMapper.xml" />
+        <mapper resource="com/qyxy/mapper/UpermissionMapper.xml" />
+        <mapper resource="com/qyxy/mapper/UrolePermissionMapper.xml" />
+        <mapper resource="com/qyxy/mapper/UroleMapper.xml" />
+        <mapper resource="com/qyxy/mapper/User1Mapper.xml" />
+        <mapper resource="com/qyxy/mapper/UserAddressMapper.xml" />
+        <mapper resource="com/qyxy/mapper/UserRoleMapper.xml" />
+        <!--引入注解所在的类-->
+        <!--<mapper class="com.qyxy.mapper.UserMapper"></mapper>-->
+        <!--引入注解所在的包-->
+        <!-- <package name="com.qyxy.mapper"></package>-->
+    </mappers>
+</configuration>

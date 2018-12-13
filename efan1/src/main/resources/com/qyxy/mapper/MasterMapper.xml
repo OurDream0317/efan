@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.qyxy.mapper.MasterMapper" >
+
+  <select id="selectMastserById" resultType="Master">
+    select * FROM Master where userid=#{userid}
+  </select>
+
+  <update id="updateMasterRemar">
+    update master set masterremar=#{masterremar} where userid=#{userid}
+  </update>
+
+</mapper>
